@@ -1,5 +1,8 @@
 	function URLparamsObj() {
 		// function returns an object with url parameters
+		// URL sample: www.test.com?var1=value1&var2=value2
+		// USE:	var params = URLparamsObj();
+		//      alert(params.var2)    // output: value2
 		if (window.location.search) {
 			// if there are params in URL
 			var param_array = document.location.search.substring(1).split('&');
@@ -16,6 +19,7 @@
 	
 	String.prototype.attachFileName = function (filename){
 		// function adds filename string to this string if it's not already there. Checks for slash also.
+		// USE: somePath = somePath.attachFileName("imsmanifest.xml");
 		var attached = "";
 		if ( this.indexOf(filename)<0 ){
 			// if it does not contain the filename
