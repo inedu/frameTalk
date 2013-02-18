@@ -1,3 +1,34 @@
+	function FocusToRibbonTab(tabName) {
+		// will load Ribbon and Focus to tab. Only works inside SharePoint 2010
+		var pm = SP.Ribbon.PageManager.get_instance();
+		pm.add_ribbonInited(function () {
+			SelectRibbonTab("Ribbon." + tabName, true);
+		});
+		var ribbon = null;
+		try {
+			ribbon = pm.get_ribbon();
+		} catch (e) {
+			//alert("catch!"); // allow alert for debug purposes only
+		}
+		if (!ribbon) {
+			if (typeof (_ribbonStartInit) == "function") {
+			    _ribbonStartInit(_ribbon.initialTabId, false, null);
+			} else {
+			    __doPostBack('ctl00$SiteActionsMenuMain$ctl00$wsaShowMenu_CmsActionControl', 'reviewPage');
+			}
+		} else {
+		var ribbon = SP.Ribbon.PageManager.get_instance().get_ribbon();
+		// set Ribbon Focus to tabName
+		SelectRibbonTab("Ribbon." + tabName, true);
+		}
+	}
+	
+	function say(what) {   
+		// Avoids exceptions when console is undefined. 
+		// BUT Will log only if there is a 'debug' param in URL. Needs URLparamsObj()
+   		if (window.console && URLparamsObj().debug) { console.log(what); } 
+	}	
+	
 	function URLparamsObj() {
 		// function returns an object with url parameters
 		// URL sample: www.test.com?var1=value1&var2=value2
