@@ -17,9 +17,9 @@
 			    __doPostBack('ctl00$SiteActionsMenuMain$ctl00$wsaShowMenu_CmsActionControl', 'reviewPage');
 			}
 		} else {
-		var ribbon = SP.Ribbon.PageManager.get_instance().get_ribbon();
-		// set Ribbon Focus to tabName
-		SelectRibbonTab("Ribbon." + tabName, true);
+			var ribbon = SP.Ribbon.PageManager.get_instance().get_ribbon();
+			// set Ribbon Focus to tabName
+			SelectRibbonTab("Ribbon." + tabName, true);
 		}
 	}
 	
