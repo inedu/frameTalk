@@ -38,7 +38,8 @@
 			// if there are params in URL
 			var param_array = document.location.search.substring(1).split('&');
 			var params = new Object();
-			for(var i=0; i < param_array.length; i++){
+			var times = param_array.length;
+			for(var i=0; i < times; i++){
 				var x = param_array[i].toString().split('=');
 				params[x[0]] = x[1];
 				// console.log("param name: " + x[0] + " --content: " + x[1]);
