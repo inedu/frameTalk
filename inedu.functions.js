@@ -64,3 +64,18 @@
 		return String(this + attached);
 	}
 	
+	String.prototype.toBoolean: function () {	 
+	    value = this;
+	    if (typeof value === 'undefined' || value === null) {
+	       return false;
+	    } else {
+		switch (value.toLowerCase()) {
+			case 'false':
+			case 'no':
+			case '0':
+				return false;
+			default:
+				return true;
+		}
+	    }
+	}
