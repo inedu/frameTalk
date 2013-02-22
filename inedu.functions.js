@@ -79,3 +79,24 @@
 		}
 	    }
 	}
+	
+	function GetRandomColor(param) {
+		var options;
+		switch (param) {
+			case "light":
+			    options = "89ABCDEF";
+			    break;
+			case "middle":
+			    options = "56789ABC";
+			    break;
+			case "dark":
+			    options = "01234567";
+			    break;
+			}
+		var letters = options.split('');
+		var color = '#';
+		for (var i = 0; i < 6; i++) {
+			color += letters[Math.round(Math.random() * (letters.length-1))];
+		}
+		return color;
+	}
