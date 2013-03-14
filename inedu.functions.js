@@ -1,4 +1,36 @@
-
+	
+	function InitNewWindow() {
+		// function builds a new window document and adds a sample html & js code
+		// define internal methods
+		this.writeScript = function (what){
+			return ("<scri" + "pt type='text/javascript'>" + what + "</scri" + "pt>");
+		}
+		this.writeScriptFile = function (what){
+			return ("<scri" + "pt type='text/javascript' src='" + what + "'> </scri" + "pt>");
+		}
+		// build the window and content
+		try {
+			document.write("<div id='log'></div>");
+			var playerWindow = window.open();
+			var objDoc = playerWindow.document;
+			objDoc.open();
+			objDoc.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+			objDoc.write("<html><head>");
+			objDoc.write(writeScript("alert('script!')"));
+			objDoc.write(writeScriptFile("//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"));
+			objDoc.write("</head><body>");
+			objDoc.write("<div id='errorLog'>no errors!</div> ");
+			objDoc.write("html content");
+			objDoc.write("<table border='1' width='100%'> <tr>");
+			objDoc.write("   <td> html content in table </td></tr>");
+			objDoc.write("</table>");
+			objDoc.write("</body></html>");
+			objDoc.close();
+		} catch (err) {
+			document.getElementById("log").innerHTML = "InitNewWindow() error: " + err.message;
+		}
+	}	
+	
 	function say(what) {   
 		// Avoids exceptions when console is undefined. 
    		if (window.console) { console.log(what); } 
