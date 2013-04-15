@@ -1,7 +1,6 @@
 // 1. put the code to both DOMs (window + iFrame)
 // 2. run both InitListener()
-// 3. send example: SendMessage( { "theFunction" : "handshake",
-                                   "theData" : someJsonData     });
+// 3. send example: SendMessage( { "theFunction" : "handshake", "theData" : someJsonData     });
 
 
 function InitListener() {
@@ -17,7 +16,7 @@ function InitListener() {
 function SendMessage(theMessage) {
     try {
         var where = document.getElementById("target_iFrame").contentWindow; // to talk to child iFrame
-        // var where = window.top // to talk to parent frame
+        // var where = window.top                                           // to talk to parent frame
         var myMsg = window.JSON.stringify(theMessage);
         where.postMessage(myMsg, '*');
     } catch (err) {
