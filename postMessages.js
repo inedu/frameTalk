@@ -1,7 +1,7 @@
 // 1. put the code to both DOMs (window + iFrame)
 // 2. run both InitListener()
+// 3. fix the where var in each SendMessage()
 // 3. send example: SendMessage( { "theFunction" : "handshake", "theData" : someJsonData     });
-
 
 function InitListener() {
     if (window.addEventListener) {
@@ -30,7 +30,7 @@ function ReceiveMessage(event) {
         var theFunction = eventObjData.theFunction;
         var theData = eventObjData.theData;
         //
-        if (theFunction == "sayHello") {           
+        if (theFunction == "handshake") {           
             SendMessage({ "theFunction": "replyHello", "theData": "hi there, this is a reply" });
         }   
         // go on checking for function names here... 
