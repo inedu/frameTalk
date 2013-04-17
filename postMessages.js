@@ -1,7 +1,7 @@
 // 1. put the code to both DOMs (window + iFrame)
 // 2. run both InitListener()
 // 3. fix the where var in each SendMessage()
-// 3. send example: SendMessage( { "theFunction" : "handshake", "theData" : someJsonData     });
+// **** send example: SendMessage( { "theFunction" : "handshake", "theData" : someJsonData     });
 
 function InitListener() {
     if (window.addEventListener) {
