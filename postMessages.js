@@ -29,7 +29,8 @@ function ReceiveMessage(event) {
         var theFunction = eventObjData.theFunction;
         var theData = eventObjData.theData;
         //
-        if (theFunction == "handshake") {           
+        if (theFunction == "handshake") { 
+            console.log("HandShake");
             SendMessage({ "theFunction": "replyHandshake", "theData": theData });
         }  
         if (theFunction == "replyHandshake") {           
