@@ -1,6 +1,6 @@
 // 1. put the code to both DOMs (window + iFrame)
 // 2. run both InitListener()
-// **** send example: SendMessage( { "theFunction" : "handshake", "theData" : someJsonData     });
+// **** send example: SendMessage( window.top, {"theFunction" : "handshake", "theData" : "someJsonData"});
 
 function InitListener() {
     if (window.addEventListener) {
