@@ -1,6 +1,5 @@
 // 1. put the code to both DOMs (window + iFrame)
 // 2. run both InitListener()
-// 3. fix the where var in each SendMessage()
 // **** send example: SendMessage( { "theFunction" : "handshake", "theData" : someJsonData     });
 
 function InitListener() {
@@ -13,9 +12,9 @@ function InitListener() {
     }
 }
 
-function SendMessage(theMessage) {
+function SendMessage(where, theMessage) {
     try {
-        var where = document.getElementById("target_iFrame").contentWindow; // to talk to child iFrame
+        // var where = document.getElementById("target_iFrame").contentWindow; // to talk to child iFrame
         // var where = window.top                                           // to talk to parent frame
         var myMsg = window.JSON.stringify(theMessage);
         where.postMessage(myMsg, '*');
@@ -31,8 +30,11 @@ function ReceiveMessage(event) {
         var theData = eventObjData.theData;
         //
         if (theFunction == "handshake") {           
-            SendMessage({ "theFunction": "replyHello", "theData": "hi there, this is a reply" });
-        }   
+            SendMessage({ "theFunction": "replyHandshake", "theData": theData });
+        }  
+        if (theFunction == "replyHandshake") {           
+            console.log("HandShake completed. Data: " + theData );
+        }  
         // go on checking for function names here... 
         if (theFunction == "doSomething"){
             // do something
