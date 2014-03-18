@@ -17,7 +17,7 @@ function SendMessage(where, theMessage) {
         // var where = document.getElementById("target_iFrame").contentWindow; // to talk to child iFrame
         // var where = window.top                                           // to talk to parent frame
         var myMsg = window.JSON.stringify(theMessage);
-        where.postMessage(myMsg, '*');
+        window[where].postMessage(myMsg, '*');
     } catch (err) {
         alert("SendMessage - Error description: " + err.message);        
     }
