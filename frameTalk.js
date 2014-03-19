@@ -12,32 +12,31 @@
             } else if (window.attachEvent) {
                 window.attachEvent("onmessage", frameTalk.receiveMessage);        
             } else {
-                frameTalk.say("frameTalk: could not attach event listener");
+                say("could not attach event listener");
             }
             if (! (window.JSON && window.JSON.parse && window.JSON.stringify)) {
-                frameTalk.say("frameTalk: JSON missing");
+                say("JSON missing");
             }
         },
     
-		handshake : function (from, to) {
-			frameTalk.sendMessage(to, { "theFunction": "handshake", "theData": from });
-		},
+	handshake : function (from, to) {
+		frameTalk.sendMessage(to, { "theFunction": "handshake", "theData": from });
+	},
 	
         sendMessage : function (where, theMessage) {
             try {
                 // some browsers do not support json via postMessage, so stringify                                   
                 var myMsg = window.JSON.stringify(theMessage);
-                frameTalk.say("send: typeof where: " + typeof where);
+                say("send: typeof where: " + typeof where);
                 where.postMessage(myMsg, '*');
             } catch (err) {
-                frameTalk.say("sendMessage Error - description: " + err.message);        
+                say("sendMessage Error - description: " + err.message);        
             }
         },
     
         receiveMessage : function (event) {
             try {
 		// sendMessage always sends a string, so, turn it into json
-		//frameTalk.say("receive: typeof data: " + typeof event.data);
                 var eventObjData = window.JSON.parse(event.data);
                 var theFunction = eventObjData.theFunction;
                 var theData = eventObjData.theData;
@@ -46,22 +45,20 @@
                     frameTalk.sendMessage(theData, { "theFunction": "replyHandshake", "theData": 'handshake reply' });
                 }  
                 if (theFunction == "replyHandshake") {           
-                    frameTalk.say("HandShake completed. Data: " + theData );
+                    say("HandShake completed. Data: " + theData );
                 }                  
-                else {
-		// call the function that other iFrame asked to
-		   var fn = window[theFunction];
-                    fn(theData);
-                }
-            } catch (err) {
-                frameTalk.say("receiveMessage Error - description: " + err.message);        
-            }
-        },
-		
-	say : function (what) {
-		console.log("frameTalk " + what);
-	}
+	            else {
+				// call the function that other iFrame asked to
+				var fn = window[theFunction];
+				fn.apply(this, theData);
+				}
+			} catch (err) {
+				frameTalk.say("receiveMessage Error - description: " + err.message);        
+			}
+        }	
     };    
-        
+
+	function say(what){	console.log("frameTalk says: " + what);	}
+	   
   window.frameTalk = frameTalk;
 }(window));
