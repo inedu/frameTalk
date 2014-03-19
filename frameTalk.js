@@ -27,7 +27,7 @@
             try {
                 // some browsers do not support json via postMessage, so stringify                                   
                 var myMsg = window.JSON.stringify(theMessage);
-                say("send: typeof where: " + typeof where);
+                frameTalk.say("send: typeof where: " + typeof where);
                 where.postMessage(myMsg, '*');
             } catch (err) {
                 frameTalk.say("sendMessage Error - description: " + err.message);        
@@ -37,7 +37,7 @@
         receiveMessage : function (event) {
             try {
 		// sendMessage always sends a string, so, turn it into json
-		say("receive: typeof data: " + typeof event.data);
+		frameTalk.say("receive: typeof data: " + typeof event.data);
                 var eventObjData = window.JSON.parse(event.data);
                 var theFunction = eventObjData.theFunction;
                 var theData = eventObjData.theData;
