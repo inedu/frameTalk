@@ -10,9 +10,9 @@
 	frameTalk = {
         init : function() {
             if (window.addEventListener) {
-                window.addEventListener("message", this.receiveMessage, false);       
+                window.addEventListener("message", receiveMessage, false);       
             } else if (window.attachEvent) {
-                window.attachEvent("onmessage", this.receiveMessage);        
+                window.attachEvent("onmessage", receiveMessage);        
             } else {
                 say("could not attach event listener");
             }
