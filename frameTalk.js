@@ -51,7 +51,7 @@
                 else {
 		// call the function that other iFrame asked to
 		   var fn = window[theFunction];
-                    window.fn(theData);
+                    fn(theData);
                 }
             } catch (err) {
                 frameTalk.say("receiveMessage Error - description: " + err.message);        
