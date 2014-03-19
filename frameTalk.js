@@ -19,9 +19,9 @@
             }
         },
     
-	handshake : function (from, to) {
-		frameTalk.sendMessage(to, { "theFunction": "handshake", "theData": from });
-	},
+		handshake : function (from, to) {
+			frameTalk.sendMessage(to, { "theFunction": "handshake", "theData": from });
+		},
 	
         sendMessage : function (where, theMessage) {
             try {
@@ -36,8 +36,8 @@
     
         receiveMessage : function (event) {
             try {
-		// sendMessage always sends a string, so, turn it into json
-		frameTalk.say("receive: typeof data: " + typeof event.data);
+				// sendMessage always sends a string, so, turn it into json
+				//frameTalk.say("receive: typeof data: " + typeof event.data);
                 var eventObjData = window.JSON.parse(event.data);
                 var theFunction = eventObjData.theFunction;
                 var theData = eventObjData.theData;
@@ -49,8 +49,9 @@
                     frameTalk.say("HandShake completed. Data: " + theData );
                 }                  
                 else {
-			// call the function that other iFrame asked to
-                    window.theFunction(theData);
+				// call the function that other iFrame asked to
+					var fn = window[fn];
+                    window.fn(theData);
                 }
             } catch (err) {
                 frameTalk.say("receiveMessage Error - description: " + err.message);        
