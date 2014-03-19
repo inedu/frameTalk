@@ -1,11 +1,12 @@
 // 1. put the code to both DOMs (window + iFrame)
 // 2. run both frameTalk.initListener()
-// **** send example: frameTalk.sendMessage( window.top, {"theFunction" : doRun, "theData" : params});
+// **** send example: frameTalk.sendMessage( window.top, { "theFunction" : "doRun", "theParams" : [1,2,3,'four'] });
 
 (function (window) {
     "use strict";
-    var frameTalk =
-    {
+    var frameTalk, handShakeReplyTo;    
+	
+	frameTalk = {
         init : function() {
             if (window.addEventListener) {
                 window.addEventListener("message", frameTalk.receiveMessage, false);       
@@ -19,15 +20,20 @@
             }
         },
     
-	handshake : function (from, to) {
-		frameTalk.sendMessage(to, { "theFunction": "handshake", "theData": from });
-	},
+		handshake : function (from, to) {
+			handShakeReplyTo = from;
+			frameTalk.sendMessage(to, { "theFunction": "handshake", "theParams": [0] });
+		},
 	
         sendMessage : function (where, theMessage) {
             try {
+				if (!theMessage.theFunction || typeof theMessage.theFunction != "string" ||
+					!theMessage.theParams || typeof theMessage.theParams != "object" ) {
+						say("theMessage.theFunction must be a function's name (string), and theMessage.theParams must be an array");
+						return;
+				}
                 // some browsers do not support json via postMessage, so stringify                                   
                 var myMsg = window.JSON.stringify(theMessage);
-                say("send: typeof where: " + typeof where);
                 where.postMessage(myMsg, '*');
             } catch (err) {
                 say("sendMessage Error - description: " + err.message);        
@@ -36,24 +42,27 @@
     
         receiveMessage : function (event) {
             try {
-		// sendMessage always sends a string, so, turn it into json
+				// sendMessage always sends a string, so, turn it into json
                 var eventObjData = window.JSON.parse(event.data);
                 var theFunction = eventObjData.theFunction;
-                var theData = eventObjData.theData;
+                var theParams = eventObjData.theParams;
                 //
                 if (theFunction == "handshake") { 
-                    frameTalk.sendMessage(theData, { "theFunction": "replyHandshake", "theData": 'handshake reply' });
+                    frameTalk.sendMessage(handShakeReplyTo, { "theFunction": "replyHandshake", "theParams": [1] });
                 }  
                 if (theFunction == "replyHandshake") {           
-                    say("HandShake completed. Data: " + theData );
+                    if (theParams[0] == 1) { 
+						handShakeReplyTo = null;
+						say("HandShake completed." ); 
+					}
                 }                  
-	            else {
-				// call the function that other iFrame asked to
-				var fn = window[theFunction];
-				fn.apply(this, theData);
+                else {
+					// call the function that other iFrame asked to
+					var fn = window[theFunction];
+					fn.apply(this, theParams);
 				}
 			} catch (err) {
-				frameTalk.say("receiveMessage Error - description: " + err.message);        
+				say("receiveMessage Error - description: " + err.message);        
 			}
         }	
     };    
