@@ -10,21 +10,21 @@
 	frameTalk = {
         init : function() {
             if (window.addEventListener) {
-                window.addEventListener("message", receiveMessage, false);       
+                window.addEventListener("message", this.receiveMessage, false);       
             } else if (window.attachEvent) {
-                window.attachEvent("onmessage", receiveMessage);        
+                window.attachEvent("onmessage", this.receiveMessage);        
             } else {
                 say("could not attach event listener");
             }
             if (! (window.JSON && window.JSON.parse && window.JSON.stringify)) {
-                say("JSON missing");
+                say("JSON missing, please load JSON2");
             }
         },		 
 		
 		sendMessage : function (where, theFunction, theParams) {
             try {
-				if (typeof theMessage.theFunction != "string" ||
-					typeof theMessage.theParams != "object" ) {
+				if (typeof theFunction != "string" ||
+					typeof theParams != "object" ) {
 						say("theFunction must be a function's name (string), and theParams must be an array");
 						return;
 				}
@@ -33,12 +33,13 @@
 					return;
 				} 
                 // some browsers do not support json via postMessage, so stringify                                   
-                var myMsg = window.JSON.stringify(theMessage);
+                var myMsgObj = {"theFunction":theFunction, "theParams":theParams};
+				var myMsg = window.JSON.stringify(myMsgObj);
                 where.postMessage(myMsg, '*');
             } catch (err) {
                 say("sendMessage Error - description: " + err.message);        
             }
-        } 
+        }
 		 
         /*handshake : function (fromWindow, toWindow) {
 			if (typeof fromWindow != "object" || !fromWindow.postMessage || 
