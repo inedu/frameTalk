@@ -38,7 +38,7 @@
             } catch (err) {
                 say("sendMessage Error - description: " + err.message);        
             }
-        }; 
+        } 
 		 
         /*handshake : function (fromWindow, toWindow) {
 			if (typeof fromWindow != "object" || !fromWindow.postMessage || 
