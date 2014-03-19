@@ -27,15 +27,17 @@
             try {
                 // some browsers do not support json via postMessage, so stringify                                   
                 var myMsg = window.JSON.stringify(theMessage);
+                say("send: typeof where: " + typeof where);
                 where.postMessage(myMsg, '*');
             } catch (err) {
-                frameTalk.say("frameTalk sendMessage Error - description: " + err.message);        
+                frameTalk.say("sendMessage Error - description: " + err.message);        
             }
         },
     
         receiveMessage : function (event) {
             try {
 		// sendMessage always sends a string, so, turn it into json
+		say("receive: typeof data: " + typeof event.data);
                 var eventObjData = window.JSON.parse(event.data);
                 var theFunction = eventObjData.theFunction;
                 var theData = eventObjData.theData;
@@ -47,11 +49,11 @@
                     frameTalk.say("HandShake completed. Data: " + theData );
                 }                  
                 else {
-					// call the function that other iFrame asked to
+			// call the function that other iFrame asked to
                     window.theFunction(theData);
                 }
             } catch (err) {
-                frameTalk.say("frameTalk receiveMessage Error - description: " + err.message);        
+                frameTalk.say("receiveMessage Error - description: " + err.message);        
             }
         },
 		
