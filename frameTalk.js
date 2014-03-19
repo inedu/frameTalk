@@ -36,8 +36,8 @@
     
         receiveMessage : function (event) {
             try {
-				// sendMessage always sends a string, so, turn it into json
-				//frameTalk.say("receive: typeof data: " + typeof event.data);
+		// sendMessage always sends a string, so, turn it into json
+		//frameTalk.say("receive: typeof data: " + typeof event.data);
                 var eventObjData = window.JSON.parse(event.data);
                 var theFunction = eventObjData.theFunction;
                 var theData = eventObjData.theData;
@@ -49,8 +49,8 @@
                     frameTalk.say("HandShake completed. Data: " + theData );
                 }                  
                 else {
-				// call the function that other iFrame asked to
-					var fn = window[fn];
+		// call the function that other iFrame asked to
+		   var fn = window[theFunction];
                     window.fn(theData);
                 }
             } catch (err) {
