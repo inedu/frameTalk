@@ -11,7 +11,7 @@
         init : function() {
 			if (! (window.JSON && window.JSON.parse && window.JSON.stringify)) {
                 say("No init, JSON missing, please load JSON2");
-				return;
+				return false;
             }		
 			if (!hasBeenInit) {
 				if (window.addEventListener) {
@@ -22,7 +22,8 @@
 					hasBeenInit = true;					
 				} else { say("could not attach event listener"); }
 			} else { say("already init"); }
-			say("my uniqueId: " + uniqueId);
+			say("init ready, window unique Id: " + uniqueId);
+			return true;
         },		 
 		
 		sendMessage : function (where, theFunction, theParams) {
@@ -65,9 +66,8 @@
     };    
 
 	function receiveMessage (event) {
-		var a = 1; // for breakpoint reasons
 		try {
-			// sendMessage always sends a string, so, turn it into json
+			// frameTalk.sendMessage always sends a string, so, turn it into json
 			var eventObjData = window.JSON.parse(event.data),
 				theFunction = eventObjData.theFunction,
 				theParams = eventObjData.theParams,
@@ -123,7 +123,11 @@
 			else {
 				// call the function that other iFrame asked to
 				var fn = window[theFunction];
-				fn.apply(this, theParams);
+				if (typeof fn === "function") {
+					fn.apply(this, theParams);
+				} else {
+					say("receiveMessage: function not found");
+				}
 			}
 		} catch (err) {
 			say("receiveMessage Error - description: " + err.message);        
