@@ -76,6 +76,7 @@
 			//
 			if (windowId == uniqueId) {
 				// this is an echo, do not examine!
+				say('msg rejected as echo');
 				return;
 			}
 			if (theFunction == "handshake") { 
@@ -83,7 +84,7 @@
 				if (windowNameToReply === "@@top@@") {
 					wObj = window.top;
 					frameTalk.sendMessage(wObj, "replyHandshake", [0] );
-				} else {
+				} else {											
 					wObj = window.document.getElementById(windowNameToReply);					
 					if ( wObj && wObj.contentWindow ) {
 						// it's an iFrame. Put [1] in params
@@ -94,7 +95,20 @@
 						if ( wObj && wObj.contentWindow ) {
 							frameTalk.sendMessage(wObj.contentWindow, "replyHandshake", [1] );
 						} else {
-							say("could not find handshake receiver");
+							// in case iFrame has a 'name' tag, look again.
+							wObj = window.document.getElementsByName(windowNameToReply)[0];					
+							if ( wObj && wObj.contentWindow ) {
+								// it's an iFrame. Put [1] in params
+								frameTalk.sendMessage(wObj.contentWindow, "replyHandshake", [1] );
+							} else {
+								// it's not the top window nor an iFrame in this window. Look for iFrames in parent (nested case)
+								wObj = window.parent.document.getElementsByName(windowNameToReply)[0];
+								if ( wObj && wObj.contentWindow ) {
+									frameTalk.sendMessage(wObj.contentWindow, "replyHandshake", [1] );
+								} else {
+									say("could not find handshake receiver");		
+								}
+							}		
 						}
 					}
 				}				 
