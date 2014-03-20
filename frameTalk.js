@@ -99,7 +99,7 @@
 					}
 				}				 
 			}  
-			if (theFunction == "replyHandshake") {           
+			else if (theFunction == "replyHandshake") {           
 				if (theParams[0] === 0) { 
 					say("HandShake with top window completed." ); 
 				} else {
