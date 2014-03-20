@@ -65,6 +65,7 @@
     };    
 
 	function receiveMessage (event) {
+		var a = 1; // for breakpoint reasons
 		try {
 			// sendMessage always sends a string, so, turn it into json
 			var eventObjData = window.JSON.parse(event.data),
