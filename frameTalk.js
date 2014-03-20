@@ -5,7 +5,7 @@
 
 (function (window) {
     "use strict";
-    var frameTalk, hasBeenInit = false, uniqueId = getRandomInt(1000,9999);    
+    var frameTalk, hasBeenInit = false, uniqueId = getRandomInt(1000,9999), useOfPromises = true;    
 	
 	frameTalk = {
         init : function() {
@@ -31,15 +31,16 @@
 				if (typeof theFunction != "string" ) {
 					say("sendMessage second param must be a function's name (string)");
 					return;
-				}
-				if (typeof where != "object" || !where.postMessage ) {
-					say("sendMessage first param must be a window object with postMessage defined. Try .contentWindow for iFrames");
-					return;
-				} 
+				}				
 				if (typeof theParams != "object" ) {
 					// turn theParams into single record array
 					theParams = [theParams];
 				}
+				where = findPostMsgFn(where);
+				if ( !where ) {
+					say("sendMessage first param must be a window object with postMessage defined.");
+					return;
+				} 
                 // some browsers do not support json via postMessage, so stringify                                   
                 var myMsgObj = {"theFunction":theFunction, "theParams":theParams, "windowId":uniqueId};
 				var myMsg = window.JSON.stringify(myMsgObj);
@@ -49,8 +50,24 @@
             }
         },
 		 
-        handshake : function (toWindow) {
+        handshakeFallback : function (toWindow) {
 			var windowFromName;
+			toWindow = findPostMsgFn(toWindow);
+			if ( !toWindow ) {
+				say('handshake needs a window object with postMessage defined');
+				return; 
+			}
+			if (window.top === window) {
+				// handshake starts from top window
+				windowFromName = "@@top@@"; 
+			} else {
+				windowFromName = window.name;
+			}
+			frameTalk.sendMessage(toWindow, "handshake", [windowFromName]);
+		},
+		
+		handshake : function (toWindow) {
+			var defer = new $.Deferred(), windowFromName;
 			if ( typeof toWindow != "object" || !toWindow.postMessage ) {
 				say('handshake needs a window object with postMessage defined');
 				return; 
@@ -62,7 +79,7 @@
 				windowFromName = window.name;
 			}
 			frameTalk.sendMessage(toWindow, "handshake", [windowFromName]);
-		}
+		}		
     };    
 
 	function receiveMessage (event) {
@@ -139,6 +156,20 @@
 	}
 	
 	function say(what){	console.log("frameTalk says: " + what);	}
-	   
+	
+	function findPostMsgFn(where) {
+		if (where.postMessage) return where;
+		if (where.contentWindow && where.contentWindow.postMessage) return where.contentWindow;	
+		return null;
+	}
+	
+	// examine promises availability
+	if (typeof window.jQuery !== "function") {
+		// we cannot give promises, use fallbacks
+		useOfPromises = false;
+		frameTalk.handshake = frameTalk.handshakeFallback;		
+		say("caution, since no jQuery found, handshake functionality will not include promises");
+	}
+	
   window.frameTalk = frameTalk;
 }(window));
