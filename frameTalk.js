@@ -72,7 +72,7 @@
 				wObj;
 			//
 			if (theFunction == "handshake") { 
-				windowNameToReply = theParams[0]; 
+				var windowNameToReply = theParams[0]; 
 				if (windowNameToReply === "@@top@@") {
 					wObj = window.top;
 					frameTalk.sendMessage(wObj, { "theFunction": "replyHandshake", "theParams": [0] });
