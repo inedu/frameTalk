@@ -5,7 +5,7 @@
 
 (function (window) {
     "use strict";
-    var frameTalk, hasBeenInit = false;    
+    var frameTalk, hasBeenInit = false, uniqueId = getRandomInt(1000,9999);    
 	
 	frameTalk = {
         init : function() {
@@ -22,6 +22,7 @@
 					hasBeenInit = true;					
 				} else { say("could not attach event listener"); }
 			} else { say("already init"); }
+			say("my uniqueId: " + uniqueId);
         },		 
 		
 		sendMessage : function (where, theFunction, theParams) {
@@ -39,7 +40,7 @@
 					theParams = [theParams];
 				}
                 // some browsers do not support json via postMessage, so stringify                                   
-                var myMsgObj = {"theFunction":theFunction, "theParams":theParams};
+                var myMsgObj = {"theFunction":theFunction, "theParams":theParams, "windowId":uniqueId};
 				var myMsg = window.JSON.stringify(myMsgObj);
                 where.postMessage(myMsg, '*');
             } catch (err) {
@@ -69,8 +70,13 @@
 			var eventObjData = window.JSON.parse(event.data),
 				theFunction = eventObjData.theFunction,
 				theParams = eventObjData.theParams,
+				windowId = eventObjData.windowId,
 				wObj;
 			//
+			if (windowId == uniqueId) {
+				// this is an echo, do not examine!
+				return;
+			}
 			if (theFunction == "handshake") { 
 				var windowNameToReply = theParams[0]; 
 				if (windowNameToReply === "@@top@@") {
@@ -108,6 +114,10 @@
 			say("receiveMessage Error - description: " + err.message);        
 		}
 	}	
+	
+	function getRandomInt (min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
 	
 	function say(what){	console.log("frameTalk says: " + what);	}
 	   
