@@ -63,9 +63,11 @@
 			var windowFromName, hsPromiseInd = newPromiseInd(), failMsg;
 			toWindow = findPostMsgFn(toWindow);
 			if ( !toWindow ) {
-				failMsg = 'handshake needs a window object with postMessage defined';				
 				// set timer to reject, but first return the promise.
-				setTimeout( promisesTable[hsPromiseInd].reject(failMsg), 500 );
+				failMsg = 'handshake needs a window object with postMessage defined';				
+				setTimeout( function() { 
+					rejectHandShake(hsPromiseInd, failMsg); 					 
+				}, 500 );
 				return promisesTable[hsPromiseInd].promise(); 
 			}
 			if (window.top === window) {
@@ -77,7 +79,10 @@
 			// start looking for receiver window. May be not loaded/init yet, so try every 'checkTimer' milliseconds
 			repeatersTable[hsPromiseInd] = setInterval(function(){ sendOutHandShake(toWindow, windowFromName, hsPromiseInd) }, checkTimer);
 			// set a fail timer to reject the promise
-			setTimeout(function(){ rejectHandShake(hsPromiseInd) }, frameTalk.failTimeLimit);
+			failMsg = "handshake timeout. You can change timeout on frameTalk.failTimeLimit";
+			setTimeout(function() { 
+				rejectHandShake(hsPromiseInd, failMsg) 
+			}, frameTalk.failTimeLimit);
 			return promisesTable[hsPromiseInd].promise();			
 		}	
     };    
@@ -89,9 +94,11 @@
 		}
 	}
 	
-	function rejectHandShake (promiseInd) {
+	function rejectHandShake (promiseInd, failMsg) {
 		clearInterval(repeatersTable[promiseInd]);
-		promisesTable[promiseInd].reject("handshake timeout. You can change timeout on frameTalk.failTimeLimit");
+		promisesTable[promiseInd].reject(failMsg);
+		// clear the promise object to lower memory consumption
+		promisesTable[promiseInd] = "rejected";
 	}
 	
 	function receiveMessage (event) {
@@ -153,6 +160,8 @@
 				} else {
 					// resolve promise
 					promisesTable[promiseInd].resolve(true);
+					// clear the promise object to lower memory consumption
+					promisesTable[promiseInd] = "success";
 				}
 			}                  
 			else {
@@ -186,7 +195,7 @@
 		var l = promisesTable.length,
 			r = new $.Deferred();
 		promisesTable[l] = r;
-		// return the index of the new promise
+		// return the length as index of the new promise
 		return l;
 	}
 	
