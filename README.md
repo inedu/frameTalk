@@ -17,7 +17,7 @@ $(document).ready(
 			frameTalk.sendMessage(window.top, "fetchDepartmentData", ["sales", "John Doe"]);
 		},
 		function(error) { console.log('handshake to top window failed. ' +  error ); }
-	);
+	)
 );
 ```
 
