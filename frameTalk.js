@@ -96,11 +96,11 @@
 		}
 	}
 	
-	function rejectHandShake (promiseInd, failMsg) {
-		clearInterval(repeatersTable[promiseInd]);
-		promisesTable[promiseInd].reject(failMsg);
+	function rejectHandShake (hsPromiseInd, failMsg) {
+		clearInterval(repeatersTable[hsPromiseInd]);
+		promisesTable[hsPromiseInd].reject(failMsg);
 		// clear the promise object to lower memory consumption
-		promisesTable[promiseInd] = "rejected";
+		promisesTable[hsPromiseInd] = "rejected";
 	}
 	
 	function receiveMessage (event) {
@@ -164,6 +164,8 @@
 					promisesTable[promiseInd].resolve(true);
 					// clear the promise object to lower memory consumption
 					promisesTable[promiseInd] = "success";
+					// clear timeout interval
+					clearInterval(repeatersTable[promiseInd]);
 				}
 			}                  
 			else {
