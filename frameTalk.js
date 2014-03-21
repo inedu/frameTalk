@@ -50,8 +50,8 @@
             }
         },
 		 
-        handshakeFallback : function (toWindow) {
-			var windowFromName;
+        handshake: function (toWindow) {
+			var windowFromName, hsPromiseInd;
 			toWindow = findPostMsgFn(toWindow);
 			if ( !toWindow ) {
 				say('handshake needs a window object with postMessage defined');
@@ -64,23 +64,11 @@
 				windowFromName = window.name;
 			}
 			frameTalk.sendMessage(toWindow, "handshake", [windowFromName]);
-		},
-		
-		handshake : function (toWindow) {
-			var windowFromName, hsPromiseInd = newPromiseInd();
-			if ( typeof toWindow != "object" || !toWindow.postMessage ) {
-				say('handshake needs a window object with postMessage defined');
-				return; 
+			if (useOfPromises) {
+				hsPromiseInd = newPromiseInd();
+				return promisesTable[hsPromiseInd].promise();
 			}
-			if (window.top === window) {
-				// handshake starts from top window
-				windowFromName = "@@top@@"; 
-			} else {
-				windowFromName = window.name;
-			}
-			frameTalk.sendMessage(toWindow, "handshake", [windowFromName]);
-			return promisesTable[hsPromiseInd].promise();
-		}		
+		}	
     };    
 
 	function receiveMessage (event) {
@@ -181,8 +169,7 @@
 	// examine promises availability
 	if (typeof window.jQuery !== "function") {
 		// we cannot give promises, use fallbacks
-		useOfPromises = false;
-		frameTalk.handshake = frameTalk.handshakeFallback;		
+		useOfPromises = false;		
 		say("caution, since no jQuery found, handshake functionality will not include promises");
 	}
 	
