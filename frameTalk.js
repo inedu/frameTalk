@@ -1,6 +1,7 @@
 (function (window) {
     "use strict";
-    var frameTalk, hasBeenInit = false, uniqueId = getRandomInt(1000,9999), useOfPromises = true, promisesTable = [0];   
+    var frameTalk, hasBeenInit = false, uniqueId = getRandomInt(1000,9999), 
+		useOfPromises = true, promisesTable = [0], repeatersTable = [];   
 	
 	frameTalk = {
         init : function() {
@@ -12,9 +13,11 @@
 				if (window.addEventListener) {
 					window.addEventListener("message", receiveMessage, false); 
 					hasBeenInit = true;
+					window.frameTalkReady = true;
 				} else if (window.attachEvent) {
 					window.attachEvent("onmessage", receiveMessage);   
-					hasBeenInit = true;					
+					hasBeenInit = true;	
+					window.frameTalkReady = true;					
 				} else { say("could not attach event listener"); }
 			} else { say("already init"); }
 			say("init ready, window unique Id: " + uniqueId);
@@ -70,15 +73,24 @@
 				windowFromName = window.name;
 			}			
 			if (useOfPromises) {
+				// take a promise index number
 				hsPromiseInd = newPromiseInd();
-				frameTalk.sendMessage(toWindow, "handshake", [windowFromName], hsPromiseInd);
-				return promisesTable[hsPromiseInd].promise();
+				// start looking for receiver window. May be not loaded/init yet, so try every half second
+				repeatersTable[hsPromiseInd] = setInterval(sendOutHandShake(toWindow, windowFromName, hsPromiseInd), 500);
 			} else {
 				frameTalk.sendMessage(toWindow, "handshake", [windowFromName]);
 			}
 		}	
     };    
 
+	function sendOutHandShake(toWindow, windowFromName, hsPromiseInd) {
+		if (toWindow.frameTalkReady) {
+			frameTalk.sendMessage(toWindow, "handshake", [windowFromName], hsPromiseInd);
+			clearInterval(repeatersTable[hsPromiseInd]);
+			return promisesTable[hsPromiseInd].promise();
+		}
+	}
+	
 	function receiveMessage (event) {
 		try {
 			// frameTalk.sendMessage always sends a string, so, turn it into json
@@ -161,6 +173,7 @@
 	function say(what){	console.log("frameTalk says: " + what);	}
 	
 	function findPostMsgFn(where) {
+		// returns the actual window that contains postMessage function. User may have only given the id of an iFrame
 		if (where.postMessage) return where;
 		if (where.contentWindow && where.contentWindow.postMessage) return where.contentWindow;	
 		return null;
