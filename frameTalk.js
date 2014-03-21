@@ -91,17 +91,20 @@
 
 	function sendOutHandShake(toWindow, windowFromName, hsPromiseInd) {
 		if (typeof toWindow.frameTalkReady !== 'undefined' && toWindow.frameTalkReady) {
-			frameTalk.sendMessage(toWindow, "handshake", [windowFromName], hsPromiseInd);
-			clearInterval(repeatersTable[hsPromiseInd]);			
+			clearInterval(repeatersTable[hsPromiseInd]);
+			frameTalk.sendMessage(toWindow, "handshake", [windowFromName], hsPromiseInd);						
 		}
 	}
 	
 	function rejectHandShake (hsPromiseInd, failMsg) {
-		clearInterval(repeatersTable[hsPromiseInd]);
-		promisesTable[hsPromiseInd].reject(failMsg);
-		// clear the promise object to lower memory consumption
-		promisesTable[hsPromiseInd] = "rejected";
-		repeatersTable[hsPromiseInd] = "cleared";
+		// if not a promise object there, promise has already been resolved/rejected
+		if (typeof promisesTable[hsPromiseInd] == 'object') {
+			clearInterval(repeatersTable[hsPromiseInd]);
+			promisesTable[hsPromiseInd].reject(failMsg);
+			// clear the promise object to lower memory consumption
+			promisesTable[hsPromiseInd] = "rejected";
+			repeatersTable[hsPromiseInd] = "cleared";
+		}
 	}
 	
 	function receiveMessage (event) {
