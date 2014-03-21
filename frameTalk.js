@@ -98,28 +98,28 @@
 				var windowNameToReply = theParams[0]; 
 				if (windowNameToReply === "@@top@@") {
 					wObj = window.top;
-					frameTalk.sendMessage(wObj, "replyHandshake", [0] );
+					frameTalk.sendMessage(wObj, "replyHandshake", [0], promiseInd );
 				} else {											
 					wObj = window.document.getElementById(windowNameToReply);					
 					if ( wObj && wObj.contentWindow ) {
 						// it's an iFrame. Put [1] in params
-						frameTalk.sendMessage(wObj.contentWindow, "replyHandshake", [1] );
+						frameTalk.sendMessage(wObj.contentWindow, "replyHandshake", [1], promiseInd );
 					} else {
 						// it's not the top window nor an iFrame in this window. Look for iFrames in parent (nested case)
 						wObj = window.parent.document.getElementById(windowNameToReply);
 						if ( wObj && wObj.contentWindow ) {
-							frameTalk.sendMessage(wObj.contentWindow, "replyHandshake", [1] );
+							frameTalk.sendMessage(wObj.contentWindow, "replyHandshake", [1], promiseInd );
 						} else {
 							// in case iFrame has a 'name' tag, look again.
 							wObj = window.document.getElementsByName(windowNameToReply)[0];					
 							if ( wObj && wObj.contentWindow ) {
 								// it's an iFrame. Put [1] in params
-								frameTalk.sendMessage(wObj.contentWindow, "replyHandshake", [1] );
+								frameTalk.sendMessage(wObj.contentWindow, "replyHandshake", [1], promiseInd );
 							} else {
 								// it's not the top window nor an iFrame in this window. Look for iFrames in parent (nested case)
 								wObj = window.parent.document.getElementsByName(windowNameToReply)[0];
 								if ( wObj && wObj.contentWindow ) {
-									frameTalk.sendMessage(wObj.contentWindow, "replyHandshake", [1] );
+									frameTalk.sendMessage(wObj.contentWindow, "replyHandshake", [1], promiseInd );
 								} else {
 									say("could not find handshake receiver");		
 								}
