@@ -5,7 +5,7 @@
 
 (function (window) {
     "use strict";
-    var frameTalk, hasBeenInit = false, uniqueId = getRandomInt(1000,9999), useOfPromises = true;    
+    var frameTalk, hasBeenInit = false, uniqueId = getRandomInt(1000,9999), useOfPromises = true, promisesTable = [];   
 	
 	frameTalk = {
         init : function() {
@@ -26,7 +26,7 @@
 			return true;
         },		 
 		
-		sendMessage : function (where, theFunction, theParams) {
+		sendMessage : function (where, theFunction, theParams, promiseInd) {
             try {
 				if (typeof theFunction != "string" ) {
 					say("sendMessage second param must be a function's name (string)");
@@ -42,7 +42,7 @@
 					return;
 				} 
                 // some browsers do not support json via postMessage, so stringify                                   
-                var myMsgObj = {"theFunction":theFunction, "theParams":theParams, "windowId":uniqueId};
+                var myMsgObj = {"theFunction":theFunction, "theParams":theParams, "windowId":uniqueId, "promiseInd":promiseInd};
 				var myMsg = window.JSON.stringify(myMsgObj);
                 where.postMessage(myMsg, '*');
             } catch (err) {
@@ -67,7 +67,7 @@
 		},
 		
 		handshake : function (toWindow) {
-			var defer = new $.Deferred(), windowFromName;
+			var windowFromName, hsPromiseInd = newPromiseInd();
 			if ( typeof toWindow != "object" || !toWindow.postMessage ) {
 				say('handshake needs a window object with postMessage defined');
 				return; 
@@ -79,6 +79,7 @@
 				windowFromName = window.name;
 			}
 			frameTalk.sendMessage(toWindow, "handshake", [windowFromName]);
+			return promisesTable[hsPromiseInd].promise();
 		}		
     };    
 
@@ -89,6 +90,7 @@
 				theFunction = eventObjData.theFunction,
 				theParams = eventObjData.theParams,
 				windowId = eventObjData.windowId,
+				promiseInd = eventObjData.promiseInd,
 				wObj;
 			//
 			if (windowId == uniqueId) {
@@ -130,11 +132,16 @@
 					}
 				}				 
 			}  
-			else if (theFunction == "replyHandshake") {           
-				if (theParams[0] === 0) { 
-					say("HandShake with top window completed." ); 
+			else if (theFunction == "replyHandshake") {
+				if (!promiseInd) {
+					if (theParams[0] === 0) { 
+						say("HandShake with top window completed." ); 
+					} else {
+						say("HandShake completed." ); 
+					}
 				} else {
-					say("HandShake completed." ); 
+					// resolve promise
+					promisesTable[promiseInd].resolve(true);
 				}
 			}                  
 			else {
@@ -161,6 +168,14 @@
 		if (where.postMessage) return where;
 		if (where.contentWindow && where.contentWindow.postMessage) return where.contentWindow;	
 		return null;
+	}
+	
+	function newPromiseInd() {
+		var l = promisesTable.length,
+			r = new $.Deferred();
+		promisesTable[l] = r;
+		// return the index of the new promise
+		return l;
 	}
 	
 	// examine promises availability
