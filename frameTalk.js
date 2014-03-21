@@ -101,6 +101,7 @@
 		promisesTable[hsPromiseInd].reject(failMsg);
 		// clear the promise object to lower memory consumption
 		promisesTable[hsPromiseInd] = "rejected";
+		repeatersTable[hsPromiseInd] = "cleared";
 	}
 	
 	function receiveMessage (event) {
@@ -166,6 +167,8 @@
 					promisesTable[promiseInd] = "success";
 					// clear timeout interval
 					clearInterval(repeatersTable[promiseInd]);
+					// put a dummy record to be safe
+					repeatersTable[promiseInd] = "cleared";
 				}
 			}                  
 			else {
