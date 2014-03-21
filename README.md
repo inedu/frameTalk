@@ -7,6 +7,22 @@ frameTalk.js works without any dependencies, but if jQuery is found, you can use
 to run code after the communication between iFrames is ensured.
 frameTalk.js needs window.JSON to run, and it will log the issue on the console if JSON is not found.
 
+<h2>Ultra fast usage reference: </h2>
+<h4>
+```javascript
+$(document).ready(
+	frameTalk.
+	frameTalk.handshake(window.top).then(
+		function() { 
+			// ask for some data
+			frameTalk.sendMessage(window.top, "fetchDepartmentData", ["sales", "John Doe"]);
+		},
+		function(error) { console.log('handshake to top window failed. ' +  error ); }
+	);
+);
+```
+</h4>
+
 frameTalk object is the only public object that frameTalk.js exposes. It has following public methods and properties:
 
 <h3>frameTalk.failTimeLimit</h3>
