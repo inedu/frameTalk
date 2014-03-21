@@ -74,15 +74,15 @@
 				windowFromName = window.name;
 			} 
 			// start looking for receiver window. May be not loaded/init yet, so try every half second
-			repeatersTable[hsPromiseInd] = setInterval(sendOutHandShake(toWindow, windowFromName, hsPromiseInd), 500);			 
+			repeatersTable[hsPromiseInd] = setInterval(sendOutHandShake(toWindow, windowFromName, hsPromiseInd), 500);
+			return promisesTable[hsPromiseInd].promise();			
 		}	
     };    
 
 	function sendOutHandShake(toWindow, windowFromName, hsPromiseInd) {
 		if (typeof toWindow.frameTalkReady !== 'undefined' && toWindow.frameTalkReady) {
 			frameTalk.sendMessage(toWindow, "handshake", [windowFromName], hsPromiseInd);
-			clearInterval(repeatersTable[hsPromiseInd]);
-			return promisesTable[hsPromiseInd].promise();
+			clearInterval(repeatersTable[hsPromiseInd]);			
 		}
 	}
 	
