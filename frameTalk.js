@@ -49,37 +49,32 @@
             } catch (err) {
                 say("sendMessage Error - description: " + err.message);        
             }
-        },
-		 
+        },	
+		
         handshake: function (toWindow) {
-			/* syntax examples:
-				*	with jQuery promise: 
+			/* syntax example:
 					var frame1 = window.document.getElementById('child1');
 					frameTalk.handshake(frame1).then(
 						function(result) { alert(result); },
-						function(error) { alert('handshake failed. ' +  error.args.get_message() ); }
+						function(error) { alert('handshake failed. ' +  error ); }
 					); 
-				*	simple call -no promise:  frameTalk.handshake(frame1)  */
-			var windowFromName, hsPromiseInd;
+			*/
+			var windowFromName, hsPromiseInd = newPromiseInd(), failMsg;
 			toWindow = findPostMsgFn(toWindow);
 			if ( !toWindow ) {
-				say('handshake needs a window object with postMessage defined');
-				return; 
+				failMsg = 'handshake needs a window object with postMessage defined';				
+				// set timer to reject, but first return the promise.
+				setTimeout( promisesTable[hsPromiseInd].reject(failMsg), 500 );
+				return promisesTable[hsPromiseInd].promise(); 
 			}
 			if (window.top === window) {
 				// handshake starts from top window
 				windowFromName = "@@top@@"; 
 			} else {
 				windowFromName = window.name;
-			}			
-			if (useOfPromises) {
-				// take a promise index number
-				hsPromiseInd = newPromiseInd();
-				// start looking for receiver window. May be not loaded/init yet, so try every half second
-				repeatersTable[hsPromiseInd] = setInterval(sendOutHandShake(toWindow, windowFromName, hsPromiseInd), 500);
-			} else {
-				frameTalk.sendMessage(toWindow, "handshake", [windowFromName]);
-			}
+			} 
+			// start looking for receiver window. May be not loaded/init yet, so try every half second
+			repeatersTable[hsPromiseInd] = setInterval(sendOutHandShake(toWindow, windowFromName, hsPromiseInd), 500);			 
 		}	
     };    
 
@@ -187,10 +182,27 @@
 		return l;
 	}
 	
+	function handshakeFallback (toWindow) {
+		var windowFromName;         
+		toWindow = findPostMsgFn(toWindow);
+		if ( !toWindow ) {
+			say('handshake needs a window object with postMessage defined'); 
+			return;
+		}
+		if (window.top === window) {
+			// handshake starts from top window
+			windowFromName = "@@top@@"; 
+		} else {
+			windowFromName = window.name;
+		}
+		frameTalk.sendMessage(toWindow, "handshake", [windowFromName]);
+	}
+	
 	// examine promises availability
 	if (typeof window.jQuery !== "function") {
 		// we cannot give promises, use fallbacks
-		useOfPromises = false;		
+		useOfPromises = false;	
+		frameTalk.handshake = handshakeFallback;		
 		say("caution, since no jQuery found, handshake functionality will not include promises");
 	}
 	
