@@ -79,7 +79,7 @@
     };    
 
 	function sendOutHandShake(toWindow, windowFromName, hsPromiseInd) {
-		if (toWindow.frameTalkReady) {
+		if (typeof toWindow.frameTalkReady !== 'undefined' && toWindow.frameTalkReady) {
 			frameTalk.sendMessage(toWindow, "handshake", [windowFromName], hsPromiseInd);
 			clearInterval(repeatersTable[hsPromiseInd]);
 			return promisesTable[hsPromiseInd].promise();
