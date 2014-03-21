@@ -8,10 +8,9 @@ to run code after the communication between iFrames is ensured.
 frameTalk.js needs window.JSON to run, and it will log the issue on the console if JSON is not found.
 
 <h2>Ultra fast usage reference: </h2>
-<h4>
+ 
 ```javascript
 $(document).ready(
-	frameTalk.
 	frameTalk.handshake(window.top).then(
 		function() { 
 			// ask for some data
@@ -21,7 +20,7 @@ $(document).ready(
 	);
 );
 ```
-</h4>
+
 
 frameTalk object is the only public object that frameTalk.js exposes. It has following public methods and properties:
 
