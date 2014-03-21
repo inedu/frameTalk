@@ -1,8 +1,3 @@
-// 1. put the code to both DOMs (window + iFrame)
-// 2. run both frameTalk.init()
-// sendMessage first param must be a window object. Try .contentWindow for iFrames
-// **** send example: frameTalk.sendMessage( window.top, "doRunFn", [1,2,3,'four'] );
-
 (function (window) {
     "use strict";
     var frameTalk, hasBeenInit = false, uniqueId = getRandomInt(1000,9999), useOfPromises = true, promisesTable = [];   
@@ -27,6 +22,9 @@
         },		 
 		
 		sendMessage : function (where, theFunction, theParams, promiseInd) {
+			/* syntax examples:
+			*		frameTalk.sendMessage( window.top, "doRunFn", [1,2,3,'four'] );
+			*		frameTalk.sendMessage( iframeDOMobject, "doRunFn", 154 ); */
             try {
 				if (typeof theFunction != "string" ) {
 					say("sendMessage second param must be a function's name (string)");
@@ -51,6 +49,14 @@
         },
 		 
         handshake: function (toWindow) {
+			/* syntax examples:
+				*	with jQuery promise: 
+					var frame1 = window.document.getElementById('child1');
+					frameTalk.handshake(frame1).then(
+						function(result) { alert(result); },
+						function(error) { alert('handshake failed. ' +  error.args.get_message() ); }
+					); 
+				*	simple call -no promise:  frameTalk.handshake(frame1)  */
 			var windowFromName, hsPromiseInd;
 			toWindow = findPostMsgFn(toWindow);
 			if ( !toWindow ) {
@@ -62,11 +68,13 @@
 				windowFromName = "@@top@@"; 
 			} else {
 				windowFromName = window.name;
-			}
-			frameTalk.sendMessage(toWindow, "handshake", [windowFromName]);
+			}			
 			if (useOfPromises) {
 				hsPromiseInd = newPromiseInd();
+				frameTalk.sendMessage(toWindow, "handshake", [windowFromName], hsPromiseInd);
 				return promisesTable[hsPromiseInd].promise();
+			} else {
+				frameTalk.sendMessage(toWindow, "handshake", [windowFromName]);
 			}
 		}	
     };    
@@ -173,5 +181,8 @@
 		say("caution, since no jQuery found, handshake functionality will not include promises");
 	}
 	
-  window.frameTalk = frameTalk;
+	// auto init
+	frameTalk.init();
+	// expose scope
+	window.frameTalk = frameTalk;
 }(window));
