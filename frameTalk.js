@@ -77,11 +77,13 @@
 				windowFromName = window.name;
 			} 
 			// start looking for receiver window. May be not loaded/init yet, so try every 'checkTimer' milliseconds
-			repeatersTable[hsPromiseInd] = setInterval(function(){ sendOutHandShake(toWindow, windowFromName, hsPromiseInd) }, checkTimer);
+			repeatersTable[hsPromiseInd] = setInterval(function(){ 
+				sendOutHandShake(toWindow, windowFromName, hsPromiseInd); 
+			}, checkTimer);
 			// set a fail timer to reject the promise
 			failMsg = "handshake timeout. You can change timeout on frameTalk.failTimeLimit";
 			setTimeout(function() { 
-				rejectHandShake(hsPromiseInd, failMsg) 
+				rejectHandShake(hsPromiseInd, failMsg);
 			}, frameTalk.failTimeLimit);
 			return promisesTable[hsPromiseInd].promise();			
 		}	
