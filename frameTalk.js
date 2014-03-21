@@ -1,7 +1,7 @@
 (function (window) {
     "use strict";
     var frameTalk, hasBeenInit = false, uniqueId = getRandomInt(1000,9999), 
-		useOfPromises = true, promisesTable = [0], repeatersTable = [];   
+		useOfPromises = true, promisesTable = [0], repeatersTable = [0];   
 	
 	frameTalk = {
         init : function() {
