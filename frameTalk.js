@@ -1,9 +1,10 @@
 (function (window) {
     "use strict";
-    var frameTalk, hasBeenInit = false, uniqueId = getRandomInt(1000,9999), 
-		useOfPromises = true, promisesTable = [0], repeatersTable = [0];   
+    var frameTalk, hasBeenInit = false, uniqueId = getRandomInt(1000,9999),
+		useOfPromises = true, promisesTable = [0], repeatersTable = [0], checkTimer = 500;  
 	
 	frameTalk = {
+		failTimeLimit : 5000,
         init : function() {
 			if (! (window.JSON && window.JSON.parse && window.JSON.stringify)) {
                 say("No init, JSON missing, please load JSON2");
@@ -73,8 +74,10 @@
 			} else {
 				windowFromName = window.name;
 			} 
-			// start looking for receiver window. May be not loaded/init yet, so try every half second
-			repeatersTable[hsPromiseInd] = setInterval(function(){sendOutHandShake(toWindow, windowFromName, hsPromiseInd)}, 500);
+			// start looking for receiver window. May be not loaded/init yet, so try every 'checkTimer' milliseconds
+			repeatersTable[hsPromiseInd] = setInterval(function(){ sendOutHandShake(toWindow, windowFromName, hsPromiseInd) }, checkTimer);
+			// set a fail timer to reject the promise
+			setTimeout(function(){ rejectHandShake(hsPromiseInd) }, frameTalk.failTimeLimit);
 			return promisesTable[hsPromiseInd].promise();			
 		}	
     };    
@@ -84,6 +87,11 @@
 			frameTalk.sendMessage(toWindow, "handshake", [windowFromName], hsPromiseInd);
 			clearInterval(repeatersTable[hsPromiseInd]);			
 		}
+	}
+	
+	function rejectHandShake (promiseInd) {
+		clearInterval(repeatersTable[promiseInd]);
+		promisesTable[promiseInd].reject("handshake timeout. You can change timeout on frameTalk.failTimeLimit");
 	}
 	
 	function receiveMessage (event) {
