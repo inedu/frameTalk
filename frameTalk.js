@@ -1,9 +1,10 @@
 (function (window) {
     "use strict";
-    var frameTalk, hasBeenInit = false, uniqueId = getRandomInt(1000,9999),
+    var frameTalk, hasBeenInit = false, windowFromName, uniqueId = getRandomInt(1000,9999),
 		useOfPromises = true, promisesTable = [0], repeatersTable = [0], checkTimer = 500;  
 	
 	frameTalk = {
+		debuging : false,
 		failTimeLimit : 5000,
         init : function() {
 			if (! (window.JSON && window.JSON.parse && window.JSON.stringify)) {
@@ -23,8 +24,7 @@
 			} else { say("already init"); }
 			say("init ready, window unique Id: " + uniqueId);
 			return true;
-        },		 
-		
+        },		
 		sendMessage : function (where, theFunction, theParams, promiseInd) {
 			/* syntax examples:
 			*		frameTalk.sendMessage( window.top, "doRunFn", [1,2,3,'four'] );
@@ -50,8 +50,7 @@
             } catch (err) {
                 say("sendMessage Error - description: " + err.message);        
             }
-        },	
-		
+        },			
         handshake: function (toWindow) {
 			/* syntax example:
 					var frame1 = window.document.getElementById('child1');
@@ -60,7 +59,7 @@
 						function(error) { alert('handshake failed. ' +  error ); }
 					); 
 			*/
-			var windowFromName, hsPromiseInd = newPromiseInd(), failMsg;
+			var hsPromiseInd = newPromiseInd(), failMsg;
 			toWindow = findPostMsgFn(toWindow);
 			if ( !toWindow ) {
 				// set timer to reject, but first return the promise.
@@ -109,13 +108,18 @@
 	
 	function receiveMessage (event) {
 		try {
-			// frameTalk.sendMessage always sends a string, so, turn it into json
+			// frameTalk.sendMessage always sends a string, so, turn it into json			
 			var eventObjData = window.JSON.parse(event.data),
 				theFunction = eventObjData.theFunction,
 				theParams = eventObjData.theParams,
 				windowId = eventObjData.windowId,
 				promiseInd = eventObjData.promiseInd,
 				wObj;
+			//
+			if (frameTalk.debuging) {
+				say('msg received, parsed:');
+				say(eventObjData);
+			}
 			//
 			if (windowId == uniqueId) {
 				// this is an echo, do not examine!
@@ -192,7 +196,7 @@
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 	
-	function say(what){	console.log("frameTalk says: " + what);	}
+	function say(what){	console.log("frameTalk [" + windowFromName + "(" + uniqueId + ")] says: " + what);	}
 	
 	function findPostMsgFn(where) {
 		// returns the actual window that contains postMessage function. User may have only given the id of an iFrame
