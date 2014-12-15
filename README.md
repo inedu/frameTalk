@@ -15,7 +15,7 @@ $(document).ready(
     frameTalk.handshake(window.top, "_Iframe").then(
         function(connectionOK) {            
 			if (connectionOK === true) {
-				// ask for some data
+				// run the window.top.fetchDepartmentData function with some params
 				frameTalk.sendMessage(window.top, "fetchDepartmentData", ["sales", "John Doe"]);
 			} else {
 				// handshake failed
