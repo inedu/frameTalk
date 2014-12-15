@@ -10,19 +10,42 @@ frameTalk.js needs window.JSON to run, and it will log the issue on the console 
 <h2>Ultra fast usage reference: </h2>
  
 ```javascript
+// ensure connection from "#_Iframe" iframe element and ask for some data from parent
 $(document).ready(
-	frameTalk.handshake(window.top).then(
-		function() { 
-			// ask for some data
-			frameTalk.sendMessage(window.top, "fetchDepartmentData", ["sales", "John Doe"]);
-		},
-		function(error) { console.log('handshake to top window failed. ' +  error ); }
-	)
+    frameTalk.handshake(window.top, "_Iframe").then(
+        function(connectionOK) {            
+			if (connectionOK === true) {
+				// ask for some data
+				frameTalk.sendMessage(window.top, "fetchDepartmentData", ["sales", "John Doe"]);
+			} else {
+				// handshake failed
+			}            
+        },
+        function(error) { 
+			// handshake failed, possibly no frameTalk to listen to handshake there
+		}
+    )
 );
+
+// ask data with a promise from parent to this iFrame. Id of this iFrame must be declared
+frameTalk.sendPromise(window.top, "_Iframe", "spyreqs.rest.getWebLists", []).then(say,say);
 ```
 
-
 frameTalk object is the only public object that frameTalk.js exposes. It has following public methods and properties:
+
+<h3>frameTalk.debuging</h3>
+**description:** Sets or gets the debuging setting. Default is false. Set to true to console.log anything that frameTalk does in the specific window or iFrame.
+
+```javascript
+frameTalk.debuging = true;
+```
+
+<h3>frameTalk.getId</h3>
+**description:** Returns the random 4 digit id number created from frameTalk auto init.
+
+```javascript
+var myUniqueId = frameTalk.getId();
+```
 
 <h3>frameTalk.failTimeLimit</h3>
 **description:** Default value is 5000 ms. It is the time limit until it stops trying for a handshake. 
@@ -38,7 +61,6 @@ frameTalk.failTimeLimit = 15000;
 **returns:** The method call returns true / false 
 
 <h3>frameTalk.sendMessage (where, theFunction, theParams)</h3>
-
 **description:** This method uses window.postMessage to send the message. 
 
 ```javascript
@@ -57,9 +79,24 @@ frameTalk.sendMessage( iframeDOMobject, "doRunFn", 154 );
 
 Note: there is a fourth parameter, the promiseInd which is the handshake promise Index and it is not to be used. That is way any parameters for the function to be called should be in an array object.
 
+<h3>frameTalk.sendPromise (where, fromId, theFunction, theParams)</h3>
+**description:** This method uses window.postMessage to ask the promise. 
 
-<h3>frameTalk.handshake (toWindow)</h3>
+```javascript
+frameTalk.sendPromise(window.top, "_Iframe", "spyreqs.rest.getWebLists", []).then(say,say);
+```
 
+**parameters:** 
+<ul>
+	<li>where: (type: DOM object) : the iFrame or window to talk to</li>
+	<li>fromId: (type: string) : the id of the iFrame that promise was asked from</li>
+	<li>theFunction: (type: string) : the listener's function's name you want to run </li>
+	<li>theParams: (type: array or string/number for single values) : the params of the listener's function's. </li>
+</ul>
+
+**returns:** a promise (jQuery promise)
+
+<h3>frameTalk.handshake (toWindow, fromId)</h3>
 **description:** This method tries to ensure communication between this window and the destination window.
 
 ```javascript
@@ -82,6 +119,7 @@ Note: there is a fourth parameter, the promiseInd which is the handshake promise
 **parameters:** 
 <ul>
 	<li>toWindow: (type: DOM object) : the iFrame or window to handshake with</li>
+	<li>fromId: (type: string) : the id of the iFrame that handshake was started from</li>
 </ul>
 
 **returns:** A promise or nothing, depending on syntax
