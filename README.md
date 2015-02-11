@@ -15,8 +15,8 @@ $(document).ready(
     frameTalk.handshake(window.top, "_Iframe").then(
         function(connectionOK) {            
 			if (connectionOK === true) {
-				// run the window.top.fetchDepartmentData function with some params
-				frameTalk.sendMessage(window.top, "fetchDepartmentData", ["sales", "John Doe"]);
+				// run the window.top.saveDepartmentData function with some params
+				frameTalk.sendMessage(window.top, "saveDepartmentData", ["sales", "John Doe"]);
 			} else {
 				// handshake failed
 			}            
@@ -70,7 +70,7 @@ frameTalk.sendMessage( iframeDOMobject, "doRunFn", 154 );
 
 **parameters:** 
 <ul>
-	<li>where: (type: DOM object) : the iFrame or window to talk to</li>
+	<li>where: (type: DOM object OR string of the id of the iFrame) : the iFrame or window to talk to</li>
 	<li>theFunction: (type: string) : the listener's function's name you want to run </li>
 	<li>theParams: (type: array or string/number for single values) : the params of the listener's function's. </li>
 </ul>
@@ -88,7 +88,7 @@ frameTalk.sendPromise(window.top, "_Iframe", "spyreqs.rest.getWebLists", []).the
 
 **parameters:** 
 <ul>
-	<li>where: (type: DOM object) : the iFrame or window to talk to</li>
+	<li>where: (type: DOM object OR string of the id of the iFrame) : the iFrame or window to talk to</li>
 	<li>fromId: (type: string) : the id of the iFrame that promise was asked from</li>
 	<li>theFunction: (type: string) : the listener's function's name you want to run </li>
 	<li>theParams: (type: array or string/number for single values) : the params of the listener's function's. </li>
@@ -97,7 +97,7 @@ frameTalk.sendPromise(window.top, "_Iframe", "spyreqs.rest.getWebLists", []).the
 **returns:** a promise (jQuery promise)
 
 <h3>frameTalk.handshake (toWindow, fromId)</h3>
-**description:** This method tries to ensure communication between this window and the destination window.
+**description:** This method tries to ensure communication between this window and the destination window. Please note it is not obligatory to use it before send data. You can always try communicate without ever calling handshake, but you will not be sure that postMessage will find its target.
 
 ```javascript
   // use with promise: (jQuery is needed)
