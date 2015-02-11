@@ -90,7 +90,7 @@ Note: there is a fourth parameter, the promiseInd which is the handshake promise
 **examples:**
 ```javascript
 // from child to parent
-frameTalk.sendPromise(window.top, "_Iframe", "spyreqs.rest.getWebLists", []).then(doOnSuccess, doOnFail);
+frameTalk.sendPromise(window.top, "myFrameID", "spyreqs.rest.getWebLists", []).then(doOnSuccess, doOnFail);
 // from parent to child
 frameTalk.sendPromise( iframeDOMobject, "doRunFn", 154 ).then(doOnSuccess, doOnFail);
 frameTalk.sendPromise( "iFrameID", "someObject.someFn", paramsArray ).then(doOnSuccess, doOnFail);
