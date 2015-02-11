@@ -12,7 +12,7 @@
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 	function say(what) {
-		console.log("frameTalk [" + windowFromId + "(" + uniqueId + ")] says: " + what);
+		console.log(what);
 	}
 	function debugSay(what) {
 		if (frameTalk.debuging) {
@@ -69,7 +69,7 @@
 	function handshakeFallback(toWindow, fromId) {
 		toWindow = findPostMsgFn(toWindow);
 		if (!toWindow) {
-			say('handshakeFallback needs a window object with postMessage defined');
+			debugSay('handshakeFallback needs a window object with postMessage defined');
 			return;
 		}
 		if (window.top === window) {
@@ -115,13 +115,13 @@
 		}
 		if (windowId == uniqueId) {
 			// this is an echo, do not examine!
-			say('msg rejected as echo');
+			debugSay('msg rejected as echo');
 			return;
 		}
 		if (theFunction == "handshake") {
 			var frameIdToReply = theParams[0];
 			if (!frameIdToReply) {
-				say("handshake needs iFrame id as second parameter in order to complete reply");
+				debugSay("handshake needs iFrame id as second parameter in order to complete reply");
 			}
 			if (frameIdToReply === "@@top@@") {
 				wObj = window.top;
@@ -131,16 +131,16 @@
 				if (wObj) {
 					frameTalk.sendMessage(wObj.contentWindow, "replyHandshake", [1], promiseInd);
 				} else {
-					say("could not find handshake receiver");
+					debugSay("could not find handshake receiver");
 				}
 			}
 		} else if (theFunction == "replyHandshake") {
 			if (!promiseInd) {
 				debugSay("got handshake reply with no promise index");
 				if (theParams[0] === 0) {
-					say("HandShake with top window completed.");
+					debugSay("HandShake with top window completed.");
 				} else {
-					say("HandShake completed.");
+					debugSay("HandShake completed.");
 				}
 			} else {
 				debugSay("got handshake reply, promise index: " + promiseInd);
@@ -179,7 +179,7 @@
 					returnPromise("replyPromiseFail", frameIdToReply, err);
 				});
 			} else {
-				say("receiveMessage: function not found");
+				debugSay("receiveMessage: function not found");
 			}
 		} else {
 			// call the function that other iFrame asked to
@@ -187,7 +187,7 @@
 			if (typeof fn === "function") {
 				fn.apply(this, theParams);
 			} else {
-				say("receiveMessage: function not found");
+				debugSay("receiveMessage: function not found");
 			}
 		}
 		function returnPromise(theFunction, where, data) {
@@ -199,7 +199,7 @@
 				if (wObj) {
 					frameTalk.sendMessage(wObj.contentWindow, theFunction, [data], promiseInd);
 				} else {
-					say("could not find handshake receiver");
+					debugSay("could not find reply receiver");
 				}
 			}
 		}
@@ -286,11 +286,11 @@
 		getId : function () {
 			return uniqueId;
 		},
-		debuging : false,
+		debuging : true,
 		failTimeLimit : 5000,
 		init : function () {
 			if (!(window.JSON && window.JSON.parse && window.JSON.stringify)) {
-				say("No init, JSON missing, please load JSON2");
+				debugSay("No init, JSON missing, please load JSON2");
 				return false;
 			}
 			if (!hasBeenInit) {
@@ -303,12 +303,12 @@
 					hasBeenInit = true;
 					window.frameTalkReady = true;
 				} else {
-					say("could not attach event listener");
+					debugSay("could not attach event listener");
 				}
 			} else {
-				say("already init");
+				debugSay("already init");
 			}
-			say("init ready, window unique Id: " + uniqueId);
+			debugSay("init ready, window unique Id: " + uniqueId);
 			return true;
 		},
 		sendMessage : function (where, theFunction, theParams, promiseInd) {
@@ -317,7 +317,7 @@
 			 *		frameTalk.sendMessage( iframeDOMobject, "doRunFn", 154 ); */
 			try {
 				if (typeof theFunction != "string") {
-					say("sendMessage second param must be a function's name (string)");
+					debugSay("sendMessage second param must be a function's name (string)");
 					return;
 				}
 				if (typeof theParams != "object") {
@@ -326,7 +326,7 @@
 				}
 				where = findPostMsgFn(where);
 				if (!where) {
-					say("sendMessage first param must be a window object with postMessage defined.");
+					debugSay("sendMessage first param must be a window object with postMessage defined.");
 					return;
 				}
 				// some browsers do not support json via postMessage, so stringify
@@ -340,7 +340,7 @@
 				var myMsg = window.JSON.stringify(JSON.decycle(myMsgObj));
 				where.postMessage(myMsg, '*');
 			} catch (err) {
-				say("sendMessage error: " + err.message);
+				debugSay("sendMessage error: " + err.message);
 			}
 		},
 		sendPromise : function (where, fromId, theFunction, theParams) {
@@ -423,7 +423,7 @@
 		// we cannot give promises, use fallbacks
 		useOfPromises = false;
 		frameTalk.handshake = handshakeFallback;
-		say("caution, since no jQuery found, handshake functionality will not include promises");
+		debugSay("caution, since no jQuery found, handshake functionality will not include promises");
 	}
 	// auto init
 	frameTalk.init();

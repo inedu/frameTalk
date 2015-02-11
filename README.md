@@ -34,7 +34,7 @@ frameTalk.sendPromise(window.top, "_Iframe", "spyreqs.rest.getWebLists", []).the
 frameTalk object is the only public object that frameTalk.js exposes. It has following public methods and properties:
 
 <h3>frameTalk.debuging</h3>
-**description:** Sets or gets the debuging setting. Default is false. Set to true to console.log anything that frameTalk does in the specific window or iFrame.
+**description:** Sets or gets the debuging setting. Default is true to help you connect the iFrames. It logs all frameTalk actions in browser console. 
 
 ```javascript
 frameTalk.debuging = true;
