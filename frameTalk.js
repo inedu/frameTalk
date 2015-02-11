@@ -26,6 +26,9 @@
 			return where;
 		if (where.contentWindow && where.contentWindow.postMessage)
 			return where.contentWindow;
+		if (document.getElementById(where) != null) {
+			return document.getElementById(where).contentWindow;
+		}
 		return null;
 	}
 	function newPromiseInd() {
@@ -180,7 +183,7 @@
 			}
 		} else {
 			// call the function that other iFrame asked to
-			fn = window[theFunction];
+			fn = eval("window." + theFunction);
 			if (typeof fn === "function") {
 				fn.apply(this, theParams);
 			} else {
