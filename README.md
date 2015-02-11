@@ -63,9 +63,12 @@ frameTalk.failTimeLimit = 15000;
 <h3>frameTalk.sendMessage (where, theFunction, theParams)</h3>
 **description:** This method uses window.postMessage to send the message. 
 
+**examples:**
 ```javascript
 frameTalk.sendMessage( window.top, "doRunFn", [1,2,3,'four'] );
 frameTalk.sendMessage( iframeDOMobject, "doRunFn", 154 );
+frameTalk.sendMessage( "iFrameID", "someObject.someFn", paramsArray );
+frameTalk.sendMessage( $("#iFrameID")[0], "someObject.someFn", paramsArray );
 ```
 
 **parameters:** 
@@ -82,8 +85,12 @@ Note: there is a fourth parameter, the promiseInd which is the handshake promise
 <h3>frameTalk.sendPromise (where, fromId, theFunction, theParams)</h3>
 **description:** This method uses window.postMessage to ask the promise. 
 
+**examples:**
 ```javascript
-frameTalk.sendPromise(window.top, "_Iframe", "spyreqs.rest.getWebLists", []).then(say,say);
+frameTalk.sendPromise(window.top, "_Iframe", "spyreqs.rest.getWebLists", []).then(doOnSuccess, doOnFail);
+frameTalk.sendPromise( iframeDOMobject, "doRunFn", 154 ).then(doOnSuccess, doOnFail);
+frameTalk.sendPromise( "iFrameID", "someObject.someFn", paramsArray ).then(doOnSuccess, doOnFail);
+frameTalk.sendPromise( $("#iFrameID")[0], "someObject.someFn", paramsArray ).then(doOnSuccess, doOnFail);
 ```
 
 **parameters:** 
