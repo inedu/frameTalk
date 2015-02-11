@@ -65,7 +65,9 @@ frameTalk.failTimeLimit = 15000;
 
 **examples:**
 ```javascript
+// from child to parent
 frameTalk.sendMessage( window.top, "doRunFn", [1,2,3,'four'] );
+// from parent to child
 frameTalk.sendMessage( iframeDOMobject, "doRunFn", 154 );
 frameTalk.sendMessage( "iFrameID", "someObject.someFn", paramsArray );
 frameTalk.sendMessage( $("#iFrameID")[0], "someObject.someFn", paramsArray );
@@ -87,7 +89,9 @@ Note: there is a fourth parameter, the promiseInd which is the handshake promise
 
 **examples:**
 ```javascript
+// from child to parent
 frameTalk.sendPromise(window.top, "_Iframe", "spyreqs.rest.getWebLists", []).then(doOnSuccess, doOnFail);
+// from parent to child
 frameTalk.sendPromise( iframeDOMobject, "doRunFn", 154 ).then(doOnSuccess, doOnFail);
 frameTalk.sendPromise( "iFrameID", "someObject.someFn", paramsArray ).then(doOnSuccess, doOnFail);
 frameTalk.sendPromise( $("#iFrameID")[0], "someObject.someFn", paramsArray ).then(doOnSuccess, doOnFail);
@@ -106,22 +110,37 @@ frameTalk.sendPromise( $("#iFrameID")[0], "someObject.someFn", paramsArray ).the
 <h3>frameTalk.handshake (toWindow, fromId)</h3>
 **description:** This method tries to ensure communication between this window and the destination window. Please note it is not obligatory to use it before send data. You can always try communicate without ever calling handshake, but you will not be sure that postMessage will find its target.
 
+**example: Handshake from top window to iframe**
 ```javascript
-  // use with promise: (jQuery is needed)
+
   var dest = window.document.getElementById('child1');
-  // would also work: var dest = window.document.getElementById('child1').contentWindow;
-  // or : var dest = window.top;
+  
+	// use with promise: (when jQuery is present)
 	frameTalk.handshake(dest).then(
 		function(result) { alert("success:" + result); },
 		function(error) { alert('handshake failed. ' +  error ); }
 	); 
-```
 
-```javascript
-  // use without promise. Will log the result on console
-  var dest = window.document.getElementById('child1');
+	// use without promise. This will log the result on browser console (opens with F12)
 	frameTalk.handshake(dest);
 ```
+
+**example: Handshake from iframe with Id="kid" to top window**
+```javascript
+
+	var dest = window.top;
+	// use with promise: (when jQuery is present)  
+	frameTalk.handshake(dest, "kid").then(
+		function(result) { alert("success:" + result); },
+		function(error) { alert('handshake failed. ' +  error ); }
+	); 
+
+	// use without promise. Will log the result on console
+	frameTalk.handshake(dest, "kid");
+```
+
+
+
 
 **parameters:** 
 <ul>
