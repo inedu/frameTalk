@@ -10,7 +10,7 @@ frameTalk.js needs window.JSON to run, and it will log the issue on the console 
 <h2>Ultra fast usage reference: </h2>
  
 ```javascript
-// ensure connection from "#_Iframe" iframe element and ask for some data from parent
+// ensure connection from "#_Iframe" iframe element and then ask for some data from parent
 $(document).ready(
     frameTalk.handshake(window.top, "_Iframe").then(
         function(connectionOK) {            
@@ -27,8 +27,9 @@ $(document).ready(
     )
 );
 
+// handshake is optional, so, a simpler example for use with promises:
 // ask data with a promise from parent to this iFrame. Id of this iFrame must be declared
-frameTalk.sendPromise(window.top, "_Iframe", "spyreqs.rest.getWebLists", []).then(say,say);
+frameTalk.sendPromise(window.top, "_IframeID", "spyreqs.rest.getWebLists", []).then(doOnSuccess, doOnFail);
 ```
 
 frameTalk object is the only public object that frameTalk.js exposes. It has following public methods and properties:
