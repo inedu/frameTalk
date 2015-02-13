@@ -16,7 +16,6 @@ frameTalk.sendPromise(window.top, "_IframeID", "someObject.someMethod", [argumen
 // example without using promises
 frameTalk.sendMessage(window.top, "someObject.someMethod", [argument1, argument2]);
 
-
 // handshake is optional to use but it makes sure that postMessage wil find its target
 // ensure connection from "_Iframe" iframe element and then ask for some data from parent
     frameTalk.handshake(window.top, "_Iframe").then(
@@ -75,15 +74,15 @@ Note: there is a fourth parameter, the promiseInd which is the handshake promise
 // from child to parent
 frameTalk.sendPromise(window.top, "myFrameID", "spyreqs.rest.getWebLists", []).then(doOnSuccess, doOnFail);
 // from parent to child
-frameTalk.sendPromise( iframeDOMobject, , "doRunFn", 154 ).then(doOnSuccess, doOnFail);
-frameTalk.sendPromise( "iFrameID", , "someObject.someFn", paramsArray ).then(doOnSuccess, doOnFail);
-frameTalk.sendPromise( $("#iFrameID")[0], , "someObject.someFn", paramsArray ).then(doOnSuccess, doOnFail);
+frameTalk.sendPromise( iframeDOMobject, "@@top@@", "doRunFn", 154 ).then(doOnSuccess, doOnFail);
+frameTalk.sendPromise( "iFrameID", "@@top@@", "someObject.someFn", paramsArray ).then(doOnSuccess, doOnFail);
+frameTalk.sendPromise( $("#iFrameID")[0], "@@top@@", "someObject.someFn", paramsArray ).then(doOnSuccess, doOnFail);
 ```
 
 **parameters:** 
 <ul>
 	<li>where: (type: DOM object OR string of the id of the iFrame) : the iFrame or window to talk to</li>
-	<li>fromId: (type: string) : the id of the iFrame that promise was asked from</li>
+	<li>fromId: (type: string) : the id of the iFrame that promise was asked from. Please use "@@top@@" for window.top</li>
 	<li>theFunction: (type: string) : the listener's function's name you want to run </li>
 	<li>theParams: (type: array or string/number for single values) : the params of the listener's function's. </li>
 </ul>
