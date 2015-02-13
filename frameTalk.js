@@ -15,7 +15,7 @@
 		console.log(what);
 	}
 	function debugSay(what) {
-		if (frameTalk.debuging) {
+		if (frameTalk.debugging) {
 			console.log("frameTalk debug [" + windowFromId + "(" + uniqueId + ")] says: ");
 			console.log(what);
 		}
@@ -286,7 +286,7 @@
 		getId : function () {
 			return uniqueId;
 		},
-		debuging : true,
+		debugging : true,
 		failTimeLimit : 5000,
 		init : function () {
 			if (!(window.JSON && window.JSON.parse && window.JSON.stringify)) {

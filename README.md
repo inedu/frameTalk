@@ -3,15 +3,22 @@ frameTalk
 frameTalk.js provides a simple way to use window.postMessage for iFrame communication.
 After loading, frameTalk will add event listener to the window it is loaded.
 You have to load frameTalk.js script in all windows or iFrames you want to use it.
-frameTalk.js works without any dependencies, but if jQuery is found, you can use handshake method asynchronously 
-to run code after the communication between iFrames is ensured.
+frameTalk.js works without any dependencies, but if jQuery is found, you can use promises, and the handshake method asynchronously 
 frameTalk.js needs window.JSON to run, and it will log the issue on the console if JSON is not found.
+
 
 <h2>Ultra fast usage reference: </h2>
  
 ```javascript
-// ensure connection from "#_Iframe" iframe element and then ask for some data from parent
-$(document).ready(
+// ask data with a promise from parent to this iFrame. Id of this iFrame must be declared
+frameTalk.sendPromise(window.top, "_IframeID", "someObject.someMethod", [argument1, argument2]).then(doOnSuccess, doOnFail);
+
+// example without using promises
+frameTalk.sendMessage(window.top, "someObject.someMethod", [argument1, argument2]);
+
+
+// handshake is optional to use but it makes sure that postMessage wil find its target
+// ensure connection from "_Iframe" iframe element and then ask for some data from parent
     frameTalk.handshake(window.top, "_Iframe").then(
         function(connectionOK) {            
 			if (connectionOK === true) {
@@ -25,20 +32,15 @@ $(document).ready(
 			// handshake failed, possibly no frameTalk to listen to handshake there
 		}
     )
-);
-
-// handshake is optional, so, a simpler example for use with promises:
-// ask data with a promise from parent to this iFrame. Id of this iFrame must be declared
-frameTalk.sendPromise(window.top, "_IframeID", "spyreqs.rest.getWebLists", []).then(doOnSuccess, doOnFail);
 ```
 
 frameTalk object is the only public object that frameTalk.js exposes. It has following public methods and properties:
 
-<h3>frameTalk.debuging</h3>
-**description:** Sets or gets the debuging setting. Default is true to help you connect the iFrames. It logs all frameTalk actions in browser console. 
+<h3>frameTalk.debugging</h3>
+**description:** Sets or gets the debugging setting. Default is true to help you connect the iFrames. It logs all frameTalk actions in browser console. 
 
 ```javascript
-frameTalk.debuging = true;
+frameTalk.debugging = true;
 ```
 
 <h3>frameTalk.getId</h3>
