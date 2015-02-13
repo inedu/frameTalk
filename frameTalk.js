@@ -348,7 +348,7 @@
 			 *		frameTalk.sendPromise(window.top, "_Iframe", "spyreqs.rest.getWebLists", []).then(say,say)  */		
 			var thisSendPromiseInd = newPromiseInd(fromId), failMsg;
 			if (typeof theFunction != "string") {
-				failMsg = "sendPromise second param must be a function's name (string)";
+				failMsg = "sendPromise third param must be a function's name (string)";
 				debugSay(failMsg);
 				setTimeout(function () {
 					rejectPromise(thisSendPromiseInd, failMsg);
@@ -361,7 +361,7 @@
 			}
 			where = findPostMsgFn(where);
 			if (!where) {
-				failMsg = "sendMessage first param must be a window object with postMessage defined.";
+				failMsg = "sendPromise first param must be a window object with postMessage defined.";
 				debugSay(failMsg);
 				setTimeout(function () {
 					rejectPromise(thisSendPromiseInd, failMsg);
