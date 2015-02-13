@@ -43,26 +43,6 @@ frameTalk object is the only public object that frameTalk.js exposes. It has fol
 frameTalk.debugging = true;
 ```
 
-<h3>frameTalk.getId</h3>
-**description:** Returns the random 4 digit id number created from frameTalk auto init.
-
-```javascript
-var myUniqueId = frameTalk.getId();
-```
-
-<h3>frameTalk.failTimeLimit</h3>
-**description:** Default value is 5000 ms. It is the time limit until it stops trying for a handshake. 
-If loading iFrames takes more than 5 seconds, you can change this limit.
-
-```javascript
-frameTalk.failTimeLimit = 15000;
-```
-
-<h3>frameTalk.init</h3>
-**description:** This method adds the proper event listener to the window, depending on browser standards. It is called once the js is loaded. If called again, it makes sure it will not add another listener. Once it is called, it puts a property to the window: 
-
-**returns:** The method call returns true / false 
-
 <h3>frameTalk.sendMessage (where, theFunction, theParams)</h3>
 **description:** This method uses window.postMessage to send the message. 
 
@@ -95,9 +75,9 @@ Note: there is a fourth parameter, the promiseInd which is the handshake promise
 // from child to parent
 frameTalk.sendPromise(window.top, "myFrameID", "spyreqs.rest.getWebLists", []).then(doOnSuccess, doOnFail);
 // from parent to child
-frameTalk.sendPromise( iframeDOMobject, "doRunFn", 154 ).then(doOnSuccess, doOnFail);
-frameTalk.sendPromise( "iFrameID", "someObject.someFn", paramsArray ).then(doOnSuccess, doOnFail);
-frameTalk.sendPromise( $("#iFrameID")[0], "someObject.someFn", paramsArray ).then(doOnSuccess, doOnFail);
+frameTalk.sendPromise( iframeDOMobject, , "doRunFn", 154 ).then(doOnSuccess, doOnFail);
+frameTalk.sendPromise( "iFrameID", , "someObject.someFn", paramsArray ).then(doOnSuccess, doOnFail);
+frameTalk.sendPromise( $("#iFrameID")[0], , "someObject.someFn", paramsArray ).then(doOnSuccess, doOnFail);
 ```
 
 **parameters:** 
@@ -143,8 +123,6 @@ frameTalk.sendPromise( $("#iFrameID")[0], "someObject.someFn", paramsArray ).the
 ```
 
 
-
-
 **parameters:** 
 <ul>
 	<li>toWindow: (type: DOM object) : the iFrame or window to handshake with</li>
@@ -154,5 +132,24 @@ frameTalk.sendPromise( $("#iFrameID")[0], "someObject.someFn", paramsArray ).the
 **returns:** A promise or nothing, depending on syntax
 
 
+<h3>frameTalk.getId</h3>
+**description:** Returns the random 4 digit id number created from frameTalk auto init.
+
+```javascript
+var myUniqueId = frameTalk.getId();
+```
+
+<h3>frameTalk.failTimeLimit</h3>
+**description:** Default value is 5000 ms. It is the time limit until it stops trying for a handshake. 
+If loading iFrames takes more than 5 seconds, you can change this limit.
+
+```javascript
+frameTalk.failTimeLimit = 15000;
+```
+
+<h3>frameTalk.init</h3>
+**description:** This method adds the proper event listener to the window, depending on browser standards. It is auto called once the js is loaded. If called again, it makes sure it will not add another listener. Once it is called, it puts a property to the window: 
+
+**returns:** The method call returns true / false 
 
 
