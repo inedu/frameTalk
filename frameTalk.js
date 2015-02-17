@@ -107,6 +107,7 @@
 			frameIdToReply = eventObjData.fromId,
 			wObj, fn;
 		//
+		debugSay(event);
 		debugSay('msg received, parsed:');
 		debugSay(eventObjData);
 		if (!theFunction) {
