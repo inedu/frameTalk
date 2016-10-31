@@ -105,7 +105,8 @@
 			windowId = eventObjData.windowId,
 			promiseInd = eventObjData.promiseInd,
 			frameIdToReply = eventObjData.fromId,
-			wObj, fn;
+			theObject = eventObjData.theObject,
+			wObj, theBindingObject, fn;
 		//
 		debugSay('msg received, parsed:');
 		debugSay(eventObjData);
@@ -184,8 +185,10 @@
 		} else {
 			// call the function that other iFrame asked to
 			fn = eval("window." + theFunction);
+			theBindingObject = (theObject ? eval("window." + theObject) : this);
 			if (typeof fn === "function") {
-				fn.apply(this, theParams);
+				debugSay("receiveMessage: bindingObjectToThis === window? " + theBindingObject === window);
+				fn.apply(theBindingObject, theParams); // pass in the calling object to the method call so that internal "this" calls make sense
 			} else {
 				debugSay("receiveMessage: function not found");
 			}
@@ -311,7 +314,7 @@
 			debugSay("init ready, window unique Id: " + uniqueId);
 			return true;
 		},
-		sendMessage : function (where, theFunction, theParams, promiseInd) {
+		sendMessage : function (where, theFunction, theParams, promiseInd, theObjectToBindToThis) {
 			/* syntax examples:
 			 *		frameTalk.sendMessage( window.top, "doRunFn", [1,2,3,'four'] );
 			 *		frameTalk.sendMessage( iframeDOMobject, "doRunFn", 154 ); */
@@ -334,7 +337,8 @@
 					"theFunction" : theFunction,
 					"theParams" : theParams,
 					"windowId" : uniqueId,
-					"promiseInd" : promiseInd
+					"promiseInd" : promiseInd,
+					"theObject" : theObjectToBindToThis
 				};
 				//var myMsg = window.JSON.stringify(myMsgObj);
 				var myMsg = window.JSON.stringify(JSON.decycle(myMsgObj));
