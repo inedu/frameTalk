@@ -99,7 +99,13 @@
 	}
 	function receiveMessage(event) {
 		// frameTalk.sendMessage always sends a string, so, turn it into json
-		var eventObjData = window.JSON.retrocycle(JSON.parse(event.data));
+		var eventObjData;
+		try {
+			eventObjData = window.JSON.retrocycle(JSON.parse(event.data));
+		} catch(e){
+			return;
+		}
+		
 		var theFunction = eventObjData.theFunction,
 			theParams = eventObjData.theParams,
 			windowId = eventObjData.windowId,
